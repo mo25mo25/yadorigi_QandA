@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ふるさとグリッド</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background: #fdfdfd;
+    }
+    #question-box {
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .btn {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(8, 30px);
+      grid-template-rows: repeat(8, 30px);
+      gap: 2px;
+      margin-top: 20px;
+    }
+    .cell {
+      width: 30px;
+      height: 30px;
+    }
+    .black { background-color: black; }
+    .white { background-color: white; border: 1px solid #ccc; }
+    #save-btn {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>「ふるさと」グリッド</h1>
+  <div id="question-box">
+    <div class="question" id="question-text"></div>
+    <button class="btn" onclick="answer(true)">はい</button>
+    <button class="btn" onclick="answer(false)">いいえ</button>
+  </div>
+
+  <div id="grid" style="display:none;"></div>
+  <button id="save-btn" class="btn" onclick="saveImage()" style="display:none;">画像として保存</button>
+
+  <script>
+    const questions = [
+      "『ふるさと』は屋内である", "『ふるさと』は日本である", "『ふるさと』は目に見える", "『ふるさと』は身体に染みつく", "『ふるさと』に触ることができる", "『ふるさと』は複数ある", "『ふるさと』は明確である", "『ふるさと』は家" ,"『ふるさと』は癒し", "『ふるさと』は嫌いかもしれない", "『ふるさと』は無人である", "『ふるさと』は田舎である", "『ふるさと』は旅で行ける場所である", "『ふるさと』は失った場所である", "『ふるさと』は悲しい場所だと思う", "『ふるさと』には乗り物で行ける", "『ふるさと』は金銭と換えることができる", "『ふるさと』で食べるカステラは甘いと思う", "『ふるさと』で出てくる料理は家庭料理だと思う", "『ふるさと』でファイトソングが流れる", "『ふるさと』は他人と共有される", "『ふるさと』で使いたい支払い方法は現金である", "『ふるさと』には誰かの話し声が聞こえる", "『ふるさと』で話されている言語は日本語である", "『ふるさと』が好きである", "『ふるさと』に愛されている", "『ふるさと』を捨てたいと思ったことがある", "『ふるさと』に住む他人は他人である", "『ふるさと』とは、特定の場所である", "『ふるさと』とは、頭の中の概念やイメージである", "『ふるさと』に思い入れがある", "『ふるさと』に帰宅するたびに、『故郷』が思い浮かぶ", "『ふるさと』について考える機会が多いと思う", "『ふるさと』について誰かと話すことがある", "普段生活に『ふるさと』について話す話題がある", "『ふるさと』には動物がいる", "『ふるさと』には私以外に人がいる", "『ふるさと』には私の下心が隠れている", "『ふるさと』には信頼できる人がいる", "『ふるさと』に関して『和食』を連想する", "『ふるさと』には素朴さは本物である", "『ふるさと』にはコンビニエンスがある", "『ふるさと』には店がある", "『ふるさと』には時間の概念がある", "『ふるさと』のイメージカラーは薄緑である", "『ふるさと』の気温は23度である", "『ふるさと』の英訳はhometownに相当する", "『ふるさと』の平均顔はカッパである", "『ふるさと』の景色は自然や草や木である", "『ふるさと』には小道があると思う", "『ふるさと』へ人を招待したいと思う", "『ふるさと』はずっと同じ場所である", "『ふるさと』と相性がいいお茶は玄米茶である", "『同郷』という言葉を聞いたことがある", "『同郷』という言葉を使ったことがある", "童謡『ふるさと』の歌詞「うさぎ追いし」が思い出せる", "『ふるさと』には味の区別がある", "はらおちゃん家のいなりを食べたことがある", "『ふるさと』があるなら、『いまさと』もあってよいと思う", "今までこのアンケートに出てきた『ふるさと』の回数を覚えている"
+    ];
+
+    const answers = [];
+    let index = 0;
+
+    function showQuestion() {
+      if (index < questions.length) {
+        document.getElementById("question-text").textContent = (index + 1) + ". " + questions[index];
+      } else {
+        document.getElementById("question-box").style.display = "none";
+        renderGrid();
+      }
+    }
+
+    function answer(val) {
+      answers.push(val);
+      index++;
+      showQuestion();
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      grid.style.display = "grid";
+      document.getElementById("save-btn").style.display = "inline-block";
+
+      answers.forEach(ans => {
+        const cell = document.createElement("div");
+        cell.className = "cell " + (ans ? "black" : "white");
+        grid.appendChild(cell);
+      });
+    }
+
+    function saveImage() {
+      html2canvas(document.getElementById("grid")).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'furusato_grid.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    // 初期化
+    showQuestion();
+  </script>
+</body>
+</html>
